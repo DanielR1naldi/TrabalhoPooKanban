@@ -4,6 +4,7 @@ import com.example.kanbann.model.Tarefa;
 import com.example.kanbann.model.enums.StatusTarefa;
 import com.example.kanbann.repository.TarefaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -16,21 +17,26 @@ import java.util.Optional;
 public class TarefaService {
 
     private final TarefaRepository repository;
+    @Autowired
+    StatusTarefa novoStatus;
+
 
     public Tarefa cadastrar(Tarefa novaTarefa) {
         LocalDate dataCriacao = LocalDate.now();
         novaTarefa.setDataCriacao(dataCriacao);
-        novaTarefa.setStatus(StatusTarefa.A_FAZER);
+        novaTarefa.setStatus(StatusTarefa.A_FAZER);  // Aqui, 'A_FAZER' é o valor correto do enum
         return this.repository.save(novaTarefa);
     }
+
 
     public List<Tarefa> listarPorStatus() {
         return this.repository.listarPorStatus();
     }
 
-    public Tarefa mudarDeStatus(Long id, StatusTarefa novoStatus) {
+    public Tarefa mudarDeStatus(Long id) {
         Tarefa tarefaDomain = consultarPorId(id);
         boolean alterar = false;
+
 
         if(novoStatus.equals(StatusTarefa.A_FAZER)
                 && tarefaDomain.getStatus().equals(StatusTarefa.EM_PROGRESSO)) {
@@ -89,4 +95,5 @@ public class TarefaService {
                 )
                 .toList();
     }
+
 }
